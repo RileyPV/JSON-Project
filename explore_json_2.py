@@ -40,7 +40,7 @@ data = [{'type' : 'Scattergeo',
     'marker' : {
         'size' : [5 * mags for mag in mags if mag > 3],
         'color' : mags,
-        'colorscale' : 'Viridis'
+        'colorscale' : 'Viridis',
         'reversescale' : True,
         'colorbar' : {'title' : 'Magnitude'}}
     },]

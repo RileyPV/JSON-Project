@@ -33,7 +33,7 @@ from plotly import offline
 #List comprehension
 #new_mags = [mag * 5 for mag in mags if mag > 3]
 
-data = [{'type' : 'Scattergeo',
+data = [{'type' : 'scattergeo',
     'lon' : lons,
     'lat' : lats,
     'text' : hover_texts,

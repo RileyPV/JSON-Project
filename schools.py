@@ -13,7 +13,10 @@ Map 3) Total price for in-state students living off campus over $50,000
 
 """
 
+from asyncio.windows_events import NULL
+from gettext import NullTranslations
 import json
+from unittest import skip
 
 from plotly.graph_objs import Scattergeo, Layout
 from plotly import offline
@@ -25,34 +28,27 @@ univ_data = json.load(infile)
 
 json.dump(univ_data, outfile, indent = 4)
 
-women_grad_rate, aa_enroll, instate_price, hover_texts = [],[],[],[]
+women_grad_rate, hover_texts = [],[]
 
 lons, lats, sizes = [],[],[]
 
 for school in univ_data:
     if school["NCAA"]["NAIA conference number football (IC2020)"] in [102, 107,108, 127, 130]:
+        name = school["instnm"]
         lon = school["Longitude location of institution (HD2020)"]
         lat = school["Latitude location of institution (HD2020)"]
         size = school["Total  enrollment (DRVEF2020)"]
         grad_rate = school["Graduation rate  women (DRVGR2020)"]
         if grad_rate > 50:
             women_grad_rate.append(grad_rate)
-        title = [school["instnm"], grad_rate]
-        #enroll = school["Percent of total enrollment that are Black or African American (DRVEF2020)"]
-        #price = school["Total price for in-state students living off campus (not with family)  2020-21 (DRVIC2020)"]
-        lons.append(lon)
-        lats.append(lat)
-        sizes.append(size)
-        hover_texts.append(title)
-        #if enroll > 10:    
-           # aa_enroll.append(enroll)
-        #if price > 50000:
-            #instate_price.append(price)
+            title = name, grad_rate
+            lons.append(lon)
+            lats.append(lat)
+            sizes.append(size)
+            hover_texts.append(title)
         
         
 print(women_grad_rate[:10])
-#print(aa_enroll[:10])
-#print(instate_price[:10])
 print(hover_texts[:10])
 
 
@@ -60,7 +56,7 @@ print(hover_texts[:10])
 data = [{'type' : 'scattergeo',
     'lon' : lons,
     'lat' : lats,
-    'text' : [hover_texts,grad_rate],
+    'text' : hover_texts,
     'marker' : {
         'size' : [.0002 * size for size in sizes],
         'color' : sizes,
@@ -75,23 +71,24 @@ fig = {'data':data, 'layout':my_layout}
 
 offline.plot(fig,filename='women_grad_rate.html')
 
-women_grad_rate, aa_enroll, instate_price, hover_texts = [],[],[],[]
+aa_enroll, hover_texts = [],[]
 
 lons, lats, sizes = [],[],[]
 
 for school in univ_data:
     if school["NCAA"]["NAIA conference number football (IC2020)"] in [102, 107,108, 127, 130]:
+        name = school["instnm"]
         lon = school["Longitude location of institution (HD2020)"]
         lat = school["Latitude location of institution (HD2020)"]
         size = school["Total  enrollment (DRVEF2020)"]
         enroll = school["Percent of total enrollment that are Black or African American (DRVEF2020)"]
         if enroll > 10:    
             aa_enroll.append(enroll)
-        title = [school["instnm"], enroll]
-        lons.append(lon)
-        lats.append(lat)
-        sizes.append(size)
-        hover_texts.append(title)
+            title = name, enroll
+            lons.append(lon)
+            lats.append(lat)
+            sizes.append(size)
+            hover_texts.append(title)
 
 print(aa_enroll[:10])
 print(hover_texts[:10])
@@ -116,29 +113,29 @@ fig = {'data':data, 'layout':my_layout}
 
 offline.plot(fig,filename='enrollment_rate.html')
 
-'''
-women_grad_rate, aa_enroll, instate_price, hover_texts = [],[],[],[]
+instate_price, hover_texts = [],[]
 
 lons, lats, sizes = [],[],[]
 
 for school in univ_data:
     if school["NCAA"]["NAIA conference number football (IC2020)"] in [102, 107,108, 127, 130]:
-        lon = school["Longitude location of institution (HD2020)"]
-        lat = school["Latitude location of institution (HD2020)"]
-        size = school["Total  enrollment (DRVEF2020)"]
-        price = school["Total price for in-state students living off campus (not with family)  2020-21 (DRVIC2020)"]
-        title = school["instnm"] & price
-        lons.append(lon)
-        lats.append(lat)
-        sizes.append(size)
-        hover_texts.append(title)
-        if price > 50000:
-            instate_price.append(price)
-
-print(price[:10])
+        if school["Total price for in-state students living off campus (not with family)  2020-21 (DRVIC2020)"] != None:
+            name = school["instnm"]
+            lon = school["Longitude location of institution (HD2020)"]
+            lat = school["Latitude location of institution (HD2020)"]
+            size = school["Total  enrollment (DRVEF2020)"]
+            price = school["Total price for in-state students living off campus (not with family)  2020-21 (DRVIC2020)"]
+            print(price)    
+            if price > 50000:
+                instate_price.append(price)
+                title = name, price
+                lons.append(lon)
+                lats.append(lat)
+                sizes.append(size)
+                hover_texts.append(title)
+print(instate_price)
+print(instate_price[:50])
 print(hover_texts[:10])
-
-
 
 #Map 3
 data = [{'type' : 'scattergeo',
@@ -159,4 +156,3 @@ my_layout = Layout(title='Power 5 Conference In-state Price For Students Living 
 fig = {'data':data, 'layout':my_layout}
 
 offline.plot(fig,filename='total_price.html')
-'''
